@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <body></body>
+        <script>
+            alert(foo); //undefined
+            var foo;
+            foo = 3;
+            alert(foo); // 3
+
+            var viewFoo = function(){
+                //주의가 요구됨!!
+                alert(foo);
+                var foo;
+                foo = "뭬야?";
+                alert(foo); // 뭬야?
+            }
+
+            viewFoo();
+        </script>
+    </head>
+</html>

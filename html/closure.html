@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body></body>
+    <script>
+ function foo(){
+     var x=1;
+     return{
+         increase:function(){
+             x++;
+         },
+         getX:function(){
+             return x;
+         }
+     }
+ }
+
+ var result=foo();
+ result.increase(); console.log(result.getX());
+ result.increase(); console.log(result.getX());
+
+
+    </script>
+</html>

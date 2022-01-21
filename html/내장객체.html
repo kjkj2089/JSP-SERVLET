@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <body></body>
+        <script>
+            today = new Date();
+            str = "현재" + today.getYear() + "년";
+            str +=(today.getMonth()+1) + "월";
+            str +=today.getDate() + "일. <br>";
+            document.write(str);
+            str = "현재" + today.getHours() + "시간";
+            str += (today.getMinutes()+1)+"분";
+            str += (today.getSeconds())+"초";
+            document.write(str);
+        </script>
+    </head>
+</html> 

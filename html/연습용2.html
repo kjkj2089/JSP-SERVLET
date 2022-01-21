@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>insert title here</title>
+    </head>
+    <style>span{border:1px solid red;}</style>
+    <body>
+        <input type="text" id="usr_nm" value="여기"/>
+        <ul>
+            <li>망고</li>
+            <li>파인애플~~</li>
+        </ul>
+        <div style="width:300px; height:100px" name="txt_name"></div>
+       
+        <br>
+        <script>
+        var byId = document.getElementById("usr_nm"); // class를 조회하고 싶으면 . id를 조회하고 싶으면 #
+        byId.value="과일";
+        var list = document.getElementsByTagName("li");
+        console.log(list);
+        
+        const htmlValue = "<span>맛있는 " + list[1].innerHTML + "</span>";
+        
+        const div = document.getElementsByTagName("div");
+
+        function innerHTMLTEST(){
+        div[0].innerHTML=htmlValue;
+        }
+       
+        </script>
+        <input type="button" onclick="innerHTMLTEST()" value="innerHTML"/>
+    </body>
+</html>

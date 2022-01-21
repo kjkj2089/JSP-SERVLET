@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <body></body>
+        <script>
+            var Member = function(firstName, lastName){
+                this.firstName = firstName;
+                this.lastName = lastName;
+            };
+
+            var mem = new Member("요시히로", "야마다");
+            //1번
+            mem.getName=function(){
+                return this.lastName + " " + this.firstName;
+            }
+
+            console.log(mem.getName()); // 야마다 요시히로
+
+            //2번
+            var mem2 = new Member("나미", "가케다니");
+            console.log(mem2.getName()); //개체가 이 속성 또는 메서드를 지원하지 않습니다. 서로 다른 메모리에 있으므로
+        </script>
+    </head>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>New Documnet</title>
+ </head>
+    <body>
+        <script>
+        var sports;
+        try{ // 에러가 발생할 가능성이 있는 코드 작성
+            console.log("try");
+            sports = swim;
+        } catch (e){ //try 블록에서 에러가 발생하면 실행됨, 발생한 예외를 받아 처리하는 코드 작성
+            console.log("catch");
+        } finally { // 예외(에러)발생 여부와 상관없이 try,catch 실행 후 맨 마지막에 실행
+            console.log("finally");
+        }
+        </script>
+    </body>
+</html>

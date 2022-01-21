@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>New Documnet</title>
+        <body>
+        </body>
+        <script>
+            var sports;
+            try{
+                if(!sports){
+                    throw "sports 변수에 값이 없다!!"; // 결과 -> "sports 변수에 값이 없다!!"
+                }
+            }catch (e){
+                console.log(e);
+            }finally{
+                console.log("finally");
+            }
+        </script>
+    </head>
+</html>

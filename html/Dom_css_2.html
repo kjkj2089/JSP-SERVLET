@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+        <body>
+       
+        <style>
+            .on{
+                color:red;
+                background-color:yellow;
+                border: 1px solid gray;
+            }
+            .off{
+                background-color: white;
+                border: 1px solid gray;            
+            }
+        </style>
+        <ul>
+            <li class="off">값 1</li>
+            <li class="off">값 2</li>
+            <li class="off">값 3</li>
+            <li class="off">값 4</li>
+            <li class="off">값 5</li>
+            <li class="off">값 6</li>
+        </ul>
+        <br>
+        <script>
+         var li = document.getElementsByTagName("li");
+         for(var i=0; i<li.length; i++){
+             if((i+1)%2==0){
+                 li[i].className="on";
+             }
+         }
+        </script>
+        </body>
+    
+</html>

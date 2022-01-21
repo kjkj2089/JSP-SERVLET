@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>New Document</title>
+ </head>
+    <body></body>
+        <script>
+            x=42;
+            var y=43;
+            myobj={};
+            myobj.h=4;
+            
+            // var map = new Map();
+            // map.set("sample",x);
+            // map.get("sample");
+
+            // //map 함수 사용
+            // var sample2 = {
+            //     key : "value"
+            // } // 리터럴 객체
+            // 
+            // console.log(sample2["key"]);
+            /*
+            delete 연산자 실행이 성공하면, 속성이나 원소가 undefined로 설정됩니다. delete 연산자는 실행이 가능하면 true를 반환, 불가능하면 false를 반환합니다.
+            암시적 변수는 값이 제거 되지만 명시적 변수는 제거 못함.
+            */
+           console.log("암시적변수 x의 셋팅 값: "+x+",delete 실행 후 반환 값"+ delete x+", delete 실행 후 암시적 변수 x의 값 : "+ typeof(x));
+           console.log("명시적 변수 delete 실행 후 반환 값"+ delete y+", 명시적 변수 y의 값 : "+y); //delete y returns false(var로 선언한 변수는 지울 수 없습니다.)
+           console.log("미리 정의된 객체 속성 제거"+delete Math.PI+", 미리 정의된 객체 속성 제거 PI의 값 :"+Math.PI); // delete Math.PI returns false
+           console.log("사용자 정의 속성 값 : "+ myobj.h+", 사용자 정의 속성 제거"+ delete myobj.h+", 사용자 정의 속성 제거 후의 값 :"+ myobj.h); // returns true
+           console.log("암시적 객체 제거: "+ delete myobj) // returns true(암시적으로 선언되었으므로 지울 수 있습니다)
+            
+           var trees=new Array("redwood","bay","cedar","oak","maple") // delete trees[3]
+           delete trees[3];
+           trees[3]=undefined;
+           // console.log(3 in trees); //true
+           if(3 in trees){
+               alert(trees[3]); // 이 블록은 실행되지 않습니다.
+           }
+        </script>
+    </body>
+</html>

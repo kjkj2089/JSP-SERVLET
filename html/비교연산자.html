@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <title>상수</title>
+ </head>
+    <body>
+        <div id="example1"></div>
+        <div id="example2"></div>
+        <div id="example3"></div>
+        <div id="example4"></div>
+        <div id="example5"></div>
+        <div id="example6"></div>
+
+        <script language="javascript">
+        "use strict";
+
+        //값만 확인 할때
+        var example=(1==1);
+        document.getElementById("example1").innerHTML="(1==1), 값 : "+example+", typeof : ", typeof(example);
+        
+        //형변환이 이루어져 값만 비교함
+        example=(1 == "1");
+        document.getElementById("example2").innerHTML="(1=='1'), 값 : "+example+", typeof : ", typeof(example);
+
+        //형변환이 이루어져 연산을 하지만 값이 다르기 때문에 false
+        example=(1=="2");
+        document.getElementById("example3").innerHTML="(1=='2'), 값 : "+example+", typeof : ", typeof(example);
+
+        //데이터 형까지 비교 값도 틀리고 데이터 형도 틀리기 때문에 false.
+        example=(1==="2");
+        document.getElementById("example4").innerHTML="(1==='2'), 값 : "+example+", typeof : ", typeof(example);
+
+        //데이터 형까지 비교 값도 같고 데이터 형도 같기 때문에 true.
+        example=("2"==="2");
+        document.getElementById("example5").innerHTML="('2'==='2'), 값 : "+example+", typeof : ", typeof(example);
+        </script>
+    </body>
+</html>

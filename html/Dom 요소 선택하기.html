@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <body>
+           <input id="testId" type="checkbox" name="text" value="값"/>체크박스 <br><br>
+           <div style="border:1px solid black">스타일 영역</div>
+        <br>
+        <script>
+        
+        var byName = document.getElementById("testId");
+            console.log(byName);
+        document.write("==============byId===============");
+
+        document.write("<br>");
+        document.write("byName.type ==> " +byName.type+"<br>");
+        document.write("byName.name ==> "+byName.name+"<br>");
+        document.write("byName.value ==> "+byName.value+"<br>");
+             
+        document.write("==============속성 값 변경===============");
+
+        byName.type="text";
+        byName.value="이름으로 찾았습니다!!";
+        byName.name="oh";
+
+        document.write("<br>");
+        document.write("byName.type ==> "+byName.type+"<br>");
+        document.write("byName.name ==> "+byName.name+"<br>"); //이름, value 는 배열로 값을 가져온다
+        document.write("byName.value ==> "+byName.value+"<br>");
+
+        function innerHTMLTest(){
+            var div = document.getElementsByTagName("div");
+            div[0].innerHTML = "<span>span스타일 변경</span>";
+        };
+
+
+        </script>
+    <input type="button" onclick="innerHTMLTest()" value="innerHTML"/>
+
+</body>
+    </head>
+</html> 
