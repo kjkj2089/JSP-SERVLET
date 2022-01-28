@@ -321,7 +321,7 @@
 		 function qtyMinus(element){
 			var qtyElement = element.parentNode.querySelector('input[name=qty]')
 			var qtyValue = Number(qtyElement.value);
-
+			
 			if(qtyValue > 1) {
 			qtyValue--;
 			}
@@ -383,12 +383,15 @@
 		];
 		
 		//soldOut
-
-
+		var qtyValue = null;
+		var order_price = null;
 		function searchCartList() {
 	
 			// START ajax를 이용하여 데이터를 가져왔다고 가정한다.
 			var cartList = testData;
+			//첫번째 상품 품절처리
+			testData[0].qty=0;
+			
 			// END ajax를 이용하여 데이터를 가져왔다고 가정한다.
 	
 			// var cartTable = document.getElementById("tbl_cart_list"); // or document.querySelector("#tbl_cart_list > tbody > tr");
@@ -398,12 +401,12 @@
 			var tBody = document.querySelector("#tbl_cart_list > tbody"); 
 			var trList = tBody.querySelectorAll("tr");
 			
-
 			var cartLength = cartList.length;
 			var html = "";
 			for (let index = 0; index < cartLength; index++) {
-				
-				let cart = cartList[index];
+
+				let cart = cartList[index];	
+				//console.log($('input[name=qty]').val());
 				html += `
 				<tr>						
 				 					<td class="g_pic">	
@@ -423,23 +426,23 @@
 				 							<span class="sale"><img src="../images/common/ico_sale2.gif" width="26" height="11" alt="할인" /></span>	
 				 						</p>	
 									</td>	
-									<td class="g_qty">	
+									<td class="g_qty" >	
 									<p class="qty">
-												<input type="text" name="qty" id="cnt3" value="1" class="input" title="상품수량입력" />	
+												<input type="text" name="qty" id="cnt3" value="${cart.qty}" class="input" title="상품수량입력" />	
 												<input type="hidden" name="amt" value="358,000" class="input" title="상품 가격" />	
 												<input type="hidden" name="deliver_amt" value="" class="input" title="배송비" />	
-												<input type="hidden" name="goods_code" value="ABCDEFG1401203" class="in p ut" title="상품코드" />	
+												<input type="hidden" name="goods_code" value="ABCDEFG1401203" class="input" title="상품코드" />	
 												<input type="hidden" name="item_no" value="ABCDEFG1401201_ITEM_3" class="input" title="단품 코드" />	
 												<a href="javascript:;" onclick="qtyPlus(this);" class="plus"><img src="../images/goods/btn_cnt_up.gif" width="15" height="9" alt="수량증가" /></a>	
 												<a href="javascript:;" onclick="qtyMinus(this);" class="minus"><img src="../images/goods/btn_cnt_down.gif" width="15" height="9" alt="수량감소" /></a>	
 												<a href="javascript:;" class="modi"><img src="../images/order/btn_cnt_mod.gif" width="46" height="18" alt="변경" /></a>	
 									</p>	
 								</td>	
-								<td class="g_prc"><span>${toCurrency(cart.price)}</span></td>
+								<td class="g_prc"><img src=""/><span>${toCurrency(cart.price)}</span></td>
 								<td class="g_dvr">${cart.deliver_amt}원</td>	
 								<td class="g_ord">	
 									<a href="#"><img src="../images/order/btn_order_s.gif" width="51" height="20" alt="주문하기" /></a>	
-								<a href="javascript:;" class="del" id="del" >삭제하기</a>	
+								<a href="javascript:;" class="del" id="del" name="del" >삭제하기</a>	
 				 			</td>	
 							</tr> `;
 
@@ -451,22 +454,28 @@
 		
 		
 		}
-		searchCartList();
 
 
 		$(document).ready(function() {
-
+			 $("tbody > tr:eq(0) > td:eq(4)> img").attr("src","../images/goods/img_soldout.png");
+			 $("tbody > tr:eq(0) > td:eq(4)> span").text('');
 			// 삭제
 			$(".del").click(function(){
-				alert('111');
+				($(this).closest("tr").remove());
 			});
 
+			//변경
+			$(".modi").click(function(){
+				alert("111");
+			});
 
-
+			$('input[name=qty]').attr("disabled",true);
+			$("tbody > tr:eq(0) > td:eq(3) > a:eq(0)").attr("onclick",false);
 
 
 
 		});	
+		searchCartList();
 	</script>
 </body>
 </html>
