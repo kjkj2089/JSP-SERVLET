@@ -192,8 +192,8 @@
 						<!-- TOTAL -->
 						<tr>
 							<td colspan="7" class="c_tot">
-								<span class="sum"><em>주문금액 :</em><strong id="ord_amt">619,150</strong>원</span> +
-								<span class="sum"><em>배송비합계 :</em><strong id="deliver_total_amt">6,000</strong>원</span> =
+								<span class="sum"><em>주문금액 :</em><strong id="ord_amt">total_price()</strong>원</span> +
+								<span class="sum"><em>배송비합계 :</em><strong id="deliver_total_amt">,000</strong>원</span> =
 								<span class="tot"><em>총 예상 결제금액</em><strong id="total_amt">679,150</strong>원</span>
 							</td>
 						</tr>
@@ -258,7 +258,7 @@
 </div>
 <!-- //FOOTER -->
 <script type="text/javascript">
-	
+
 	//<![CDATA[
 	
 		// 가격 , 단위 찍는 함수 420280 => 420,280 
@@ -297,10 +297,12 @@
 		/**
 		 * 수량 더하기
 		 */
-		var qtyElement = null;
+		var order_price=1;
+		
 		function qtyPlus(element){
 
-			qtyElement = element.parentNode.querySelector('input[name=qty]')
+			
+			var qtyElement = element.parentNode.querySelector('input[name=qty]')
 			var qtyValue = Number(qtyElement.value);
 			
 			if(qtyValue < 30){
@@ -308,11 +310,20 @@
 			} else{
 				alert("최대 수량입니다");
 			}
+
 			qtyElement.value = qtyValue;
-
-
-			console.log('qtyPlus', element);
+			// console.log('qtyPlus', element);
 			console.log('qtyElement', qtyElement);
+			
+
+		}
+		//String을 number로 변환하는 함수(, 원) 제거
+		function StringToNumber(text){
+		text = text.replace('원','');
+		text = text.replace(/,/g,'');
+		text = parseFloat(text);
+
+		return text;
 		}
 		/**
 		 * 수량 빼기
@@ -330,14 +341,50 @@
 			console.log('qtyMinus', element);
 			console.log('qtyElement', qtyElement);
 
-			return qtyValue;
 		}
-		 function orderPrice(){
-			
-		 }
+		
 		/***
 			이부분 부터 소스 구현.
 		**/
+
+		function soldOut(i){
+			
+			//품절 처리(이미지, 텍스트 삭제)
+			$("tbody > tr:eq("+i+") > .g_prc > img").attr("src","../images/goods/img_soldout.png");
+			$("tbody > tr:eq("+i+") > .g_prc > span").text('');
+			
+			//disabled
+			$("tbody > tr:eq("+i+") .plus").attr('onclick',false);
+			$("tbody > tr:eq("+i+") .minus").attr('onclick',false);
+			
+		}
+
+		//총 주문금액 계산
+		function total_price(){
+			var total_price = 0;
+			for(var i=0; i<testData.length; i++){
+				if(testData[i].qty !=0 && testData[i].qty !=undefined){
+					order_price = StringToNumber($(".g_prc:eq("+i+") > span").text());
+					total_price += order_price;
+				}
+			}
+
+			return total_price;
+		}
+
+		//배송비 계산
+		function deliver_price(){
+			var deliver_total_price = 0;
+			for(var i=0; i<testData.length; i++){
+				if(testData[i].qty !=0 && testData[i].qty !=undefined){
+					order_deliver_price = StringToNumber($(".g_dvr:eq("+i+")").text());
+					deliver_total_price += order_deliver_price;
+				}
+			}
+
+			return deliver_total_price;
+		}
+
 		var testData = [
 			{
 				goods_img : '../images/goods/img_50.jpg',
@@ -381,30 +428,36 @@
 		];
 
 
+
+
 		function searchCartList() {
-	
+			
 			// START ajax를 이용하여 데이터를 가져왔다고 가정한다.
 			var cartList = testData;
-			//첫번째 상품 품절처리
-			testData[0].qty=0;
 			
+			//i번째 상품 품절처리
+			let i = 0; //여기서만 변경할 수 있어야함
+
 			// END ajax를 이용하여 데이터를 가져왔다고 가정한다.
 	
 			// var cartTable = document.getElementById("tbl_cart_list"); // or document.querySelector("#tbl_cart_list > tbody > tr");
 			// var cartTable = document.querySelector("#tbl_cart_list > tbody > tr");
 			// console.log(cartTable);
-	
+
+			testData[i].qty=0; 
+			
 			var tBody = document.querySelector("#tbl_cart_list > tbody"); 
 			var trList = tBody.querySelectorAll("tr");
 			
 			var cartLength = cartList.length;
 			var html = "";
+			
 			for (let index = 0; index < cartLength; index++) {
-
+				
+				
 				let cart = cartList[index];	
-				//console.log($('input[name=qty]').val());
 				html += `
-				<tr>						
+				<tr class = "trw">						
 				 					<td class="g_pic">	
 				 						<input type="checkbox"  name="choice_prd" class="checkbox"  title="상품 선택"/>	
 				 						<a href="#"><img src="../images/goods/img_50.jpg" width="50" height="50"  alt="상품"  /></a>	
@@ -414,7 +467,7 @@
 				 							<a href="#">${cart.goods_nm}></a>	
 				 						</p>	
 				 						<ul class="opt">			
-							 							<li>${cart.item[0].item_nm} "("${cart.item[0].item_nm}")"개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
+							 							<li>${cart.item[0].item_nm} "("${cart.item[0].item_nm}")" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
 				  						<p class="pprc">${toCurrency(cart.price)}원</p>	
 				 					</td>	
 									<td class="g_info">	
@@ -434,7 +487,7 @@
 												<a href="javascript:;" class="modi"><img src="../images/order/btn_cnt_mod.gif" width="46" height="18" alt="변경" /></a>	
 									</p>	
 								</td>	
-								<td class="g_prc"><img src=""/><span>${toCurrency(cart.price)}</span></td>
+								<td class="g_prc"><img src=""/><span>${toCurrency(cart.price)}원</span></td>
 								<td class="g_dvr">${cart.deliver_amt}원</td>	
 								<td class="g_ord">	
 									<a href="#"><img src="../images/order/btn_order_s.gif" width="51" height="20" alt="주문하기" /></a>	
@@ -442,37 +495,55 @@
 				 			</td>	
 							</tr> `;
 
+							
+
 			}
-			
 			tBody.innerHTML = html;
-			var $selObj = null;
-
+			soldOut(i);
 		
-		
+			
 		}
-
+		searchCartList();
 
 		$(document).ready(function() {
 
-			 $("tbody > tr:eq(0) > td:eq(4)> img").attr("src","../images/goods/img_soldout.png");
-			 $("tbody > tr:eq(0) > td:eq(4)> span").text('');
+			$('#ord_amt').text(toCurrency(total_price()));
+			$('#deliver_total_amt').text(toCurrency(deliver_price()));
+			$('#total_amt').text(toCurrency(deliver_price()+total_price()));
+			
 			// 삭제
 			$(".del").click(function(){
-				($(this).closest("tr").remove());
+				$(this).closest("tr").remove();
 			});
-
-			//변경
-			$(".modi").click(function(){
-				
-			});
-			//disabled
-			$('input[name=qty]').attr("disabled",true);
-			$("tbody > tr:eq(0) .plus").attr('onclick',false);
-			$("tbody > tr:eq(0) .minus").attr('onclick',false);
 			
-
+		
+			//변경
+			$(".modi").each(function(i){
+				$(this).click(function(){
+				var goods_qty = $(this).siblings('input[name=qty]').val();
+				var goods_price = testData[i].price;
+				var order_price = goods_qty * goods_price;
+				if(testData[i].qty != 0 && testData[i].qty != undefined){
+					$(".g_prc:eq("+i+") > span").text(toCurrency(order_price)+'원');
+					$('#ord_amt').text(toCurrency(total_price()));
+					$('#deliver_total_amt').text(toCurrency(deliver_price()));
+					$('#total_amt').text(toCurrency(deliver_price()+total_price()));
+				} 
+				else{
+					alert("품절")
+				}
+	
+			});
+			
+		});
 		});	
-		searchCartList();
+
+
+	
+		
+
+
+
 	</script>
 </body>
 </html>
