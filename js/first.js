@@ -1,8 +1,8 @@
-// bad
-const ulElement = document.getElementsByTagName('ul')[0];
-for(let i=0; i<10; i++) {
-  ulElement.innerHTML += `<li> list${i} </li>`;
-}
+// // bad
+// const ulElement = document.getElementsByTagName('ul')[0];
+// for(let i=0; i<10; i++) {
+//   ulElement.innerHTML += `<li> list${i} </li>`;
+// }
  
 // good
 const ulElement = document.getElementsByTagName('ul')[0];
