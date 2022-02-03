@@ -481,7 +481,7 @@
 				 					</td>	
 				 					<td class="g_info">	
 				 						<p class="pname">	
-				 							<a href="#">${cart.goods_nm}></a>	
+				 							<a href="#">${cart.goods_nm}</a>	
 				 						</p>	
 				 						<ul class="opt">			
 							 							<li>${cart.item[0].item_nm} "("${cart.item[0].item_nm}")" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
@@ -495,8 +495,8 @@
 									<td class="g_qty" >	
 									<p class="qty">
 												<input type="text" name="qty" id="cnt3" value="${cart.qty}" class="input" title="상품수량입력" />	
-												<input type="hidden" name="amt" value="358,000" class="input" title="상품 가격" />	
-												<input type="hidden" name="deliver_amt" value="" class="input" title="배송비" />	
+												<input type="hidden" name="amt" value="${toCurrency(cart.price)}원" class="input" title="상품 가격" />	
+												<input type="hidden" name="deliver_amt" value="${cart.deliver_amt}" class="input" title="배송비" />	
 												<input type="hidden" name="goods_code" value="ABCDEFG1401203" class="input" title="상품코드" />	
 												<input type="hidden" name="item_no" value="ABCDEFG1401201_ITEM_3" class="input" title="단품 코드" />	
 												<a href="javascript:;" onclick="qtyPlus(this);"  class="plus"><img src="../images/goods/btn_cnt_up.gif" width="15" height="9" alt="수량증가" /></a>	
@@ -523,7 +523,7 @@
 		searchCartList();
 
 		$(document).ready(function() {
-
+			//초기 금액 설정
 			$('#ord_amt').text(toCurrency(total_price()));
 			$('#deliver_total_amt').text(toCurrency(deliver_price()));
 			$('#total_amt').text(toCurrency(deliver_price()+total_price()));
@@ -541,14 +541,11 @@
 			$(".modi").each(function(i){
 			
 				$(this).click(function(){
-
+				i = $(this).closest('tr').index();
 				var goods_qty = $(this).siblings('input[name=qty]').val();
 				var goods_price = StringToNumber($(".pprc:eq("+i+")").text());
-				var order_price = goods_qty * goods_price;	
-				console.log(goods_price);
-				console.log(goods_qty);
-				console.log(order_price);
-			
+				var order_price = goods_qty * goods_price;
+
 				if($(".g_qty:eq("+i+") input[name=qty]").val() != 0 && $(".g_qty:eq("+i+") input[name=qty]").val() != undefined){
 					$(".g_prc:eq("+i+") > span").text(toCurrency(order_price)+'원');
 					$('#ord_amt').text(toCurrency(total_price()));
@@ -558,30 +555,45 @@
 				else{
 					alert("품절")
 				}
-				if($('tbody tr').length <3 && i==2)
-				 i--;
 			});		
 		});
 			//선택상품을 삭제
 			$(".select_del").click(function(){	
 				let checked=true;
-				for(let i=0; i<testData.length; i++){
+				for(let i=0; i<length; i++){
 				checked = $(".g_pic:eq("+i+") > input[name=choice_prd]").is(':checked');
 				if(checked){
 				$("tbody > tr:eq("+i+")").remove();
 				i--;
 				}
-			
 		}
-				$('#ord_amt').text(toCurrency(total_price()));
-				$('#deliver_total_amt').text(toCurrency(deliver_price()));
-				$('#total_amt').text(toCurrency(deliver_price()+total_price()));
+				 $('#ord_amt').text(toCurrency(total_price()));
+				 $('#deliver_total_amt').text(toCurrency(deliver_price()));
+				 $('#total_amt').text(toCurrency(deliver_price()+total_price()));
 			});
-
 
 			//주문
 			$(".order").click(function(){
+				let checked=true;
+				let real_order_price = 0;
+				let total_order_price = 0;
 			
+				for(let i=0; i<length; i++){
+				if($(".g_qty:eq("+i+") input[name=qty]").val() !=0 && $(".g_qty:eq("+i+") input[name=qty]").val() !=undefined){
+				checked = $(".g_pic:eq("+i+") > input[name=choice_prd]").is(':checked');
+				if(checked){
+				console.log("qty = "+$(".g_qty:eq("+i+") input[name=qty] ").val()+" amt = "+$(".g_qty:eq("+i+")  input[name=amt]").val()+" deliver_amt= "+$(".g_qty:eq("+i+")  input[name=deliver_amt]").val()+
+				" goods_code = "+$(".g_qty:eq("+i+")  input[name=goods_code]").val()+" item_no = "+$(".g_qty:eq("+i+")  input[name=item_no]").val());
+				
+				total_order_price = StringToNumber($(".g_prc:eq("+i+") > span").text()) + StringToNumber($(".g_dvr:eq("+i+")").text());
+				real_order_price += total_order_price;
+	
+			}	
+		
+			}
+			
+		}	
+			console.log(toCurrency(real_order_price)+"원");
 			});
 		});
 
