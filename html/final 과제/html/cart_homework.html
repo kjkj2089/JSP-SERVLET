@@ -360,11 +360,11 @@
 		
 		function total_price(){
 			length = $('tbody > tr').length;
+			($(".g_qty:eq(2)  input[name=qty]").val());
 			let total_price = 0;
 			for(let i=0; i<length; i++){
-				if(testData[i].qty !=0 && testData[i].qty !=undefined){
+				if($(".g_qty:eq("+i+") input[name=qty]").val() !=0 && $(".g_qty:eq("+i+") input[name=qty]").val()){
 					order_price = StringToNumber($(".g_prc:eq("+i+") > span").text());
-					
 					total_price += order_price;
 				}
 			}
@@ -378,7 +378,7 @@
 			let deliver_total_price = 0;
 			for(let i=0; i<length; i++){
 				
-				if(testData[i].qty !=0 && testData[i].qty !=undefined){
+				if($(".g_qty:eq("+i+") input[name=qty]").val() !=0 && $(".g_qty:eq("+i+") input[name=qty]").val() !=undefined){
 					order_deliver_price = StringToNumber($(".g_dvr:eq("+i+")").text());
 					deliver_total_price += order_deliver_price;
 				}
@@ -541,15 +541,15 @@
 			$(".modi").each(function(i){
 			
 				$(this).click(function(){
-				if($('tbody tr').length <3 && i==2)
-				i--;
+
 				var goods_qty = $(this).siblings('input[name=qty]').val();
 				var goods_price = StringToNumber($(".pprc:eq("+i+")").text());
 				var order_price = goods_qty * goods_price;	
 				console.log(goods_price);
+				console.log(goods_qty);
 				console.log(order_price);
 			
-				if(testData[i].qty != 0 && testData[i].qty != undefined){
+				if($(".g_qty:eq("+i+") input[name=qty]").val() != 0 && $(".g_qty:eq("+i+") input[name=qty]").val() != undefined){
 					$(".g_prc:eq("+i+") > span").text(toCurrency(order_price)+'원');
 					$('#ord_amt').text(toCurrency(total_price()));
 					$('#deliver_total_amt').text(toCurrency(deliver_price()));
@@ -558,6 +558,8 @@
 				else{
 					alert("품절")
 				}
+				if($('tbody tr').length <3 && i==2)
+				 i--;
 			});		
 		});
 			//선택상품을 삭제
@@ -575,6 +577,7 @@
 				$('#deliver_total_amt').text(toCurrency(deliver_price()));
 				$('#total_amt').text(toCurrency(deliver_price()+total_price()));
 			});
+
 
 			//주문
 			$(".order").click(function(){
