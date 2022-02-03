@@ -192,8 +192,8 @@
 						<!-- TOTAL -->
 						<tr>
 							<td colspan="7" class="c_tot">
-								<span class="sum"><em>주문금액 :</em><strong id="ord_amt">total_price()</strong>원</span> +
-								<span class="sum"><em>배송비합계 :</em><strong id="deliver_total_amt">,000</strong>원</span> =
+								<span class="sum"><em>주문금액 :</em><strong id="ord_amt">619,150</strong>원</span> +
+								<span class="sum"><em>배송비합계 :</em><strong id="deliver_total_amt">6,000</strong>원</span> =
 								<span class="tot"><em>총 예상 결제금액</em><strong id="total_amt">679,150</strong>원</span>
 							</td>
 						</tr>
@@ -206,9 +206,9 @@
 					<input type="checkbox" name="sel_all" class="checkbox" id="sel_all_2" />
 					<label for="sel_all">전체선택</label>
 					<div class="btns">
-						<a href="javascript:;" ><img src="../images/order/btn_ord_del.gif" width="86"  height="32" alt="선택상품을 삭제" /></a>
+						<a href="javascript:;" class="select_del" ><img src="../images/order/btn_ord_del.gif" width="86"  height="32" alt="선택상품을 삭제" /></a>
 						<a href="#"><img src="../images/order/btn_ord_wish.gif" width="103" height="32" alt="위시리스트 담기" /></a>
-						<a href="#"><img src="../images/order/btn_ord.gif" width="103" height="32" alt="주문하기" /></a>
+						<a href="#" class="order"><img src="../images/order/btn_ord.gif" width="103" height="32" alt="주문하기" /></a>
 						<a href="#"><img src="../images/order/btn_ord_all.gif" width="103" height="32" alt="전체 주문하기" /></a>
 					</div>
 				</div>
@@ -258,7 +258,6 @@
 </div>
 <!-- //FOOTER -->
 <script type="text/javascript">
-
 	//<![CDATA[
 	
 		// 가격 , 단위 찍는 함수 420280 => 420,280 
@@ -297,11 +296,9 @@
 		/**
 		 * 수량 더하기
 		 */
-		var order_price=1;
 		
 		function qtyPlus(element){
 
-			
 			var qtyElement = element.parentNode.querySelector('input[name=qty]')
 			var qtyValue = Number(qtyElement.value);
 			
@@ -346,7 +343,7 @@
 		/***
 			이부분 부터 소스 구현.
 		**/
-
+		
 		function soldOut(i){
 			
 			//품절 처리(이미지, 텍스트 삭제)
@@ -358,13 +355,16 @@
 			$("tbody > tr:eq("+i+") .minus").attr('onclick',false);
 			
 		}
-
+		var length = 0;
 		//총 주문금액 계산
+		
 		function total_price(){
-			var total_price = 0;
-			for(var i=0; i<testData.length; i++){
+			length = $('tbody > tr').length;
+			let total_price = 0;
+			for(let i=0; i<length; i++){
 				if(testData[i].qty !=0 && testData[i].qty !=undefined){
 					order_price = StringToNumber($(".g_prc:eq("+i+") > span").text());
+					
 					total_price += order_price;
 				}
 			}
@@ -374,8 +374,10 @@
 
 		//배송비 계산
 		function deliver_price(){
-			var deliver_total_price = 0;
-			for(var i=0; i<testData.length; i++){
+			length = $('tbody > tr').length;
+			let deliver_total_price = 0;
+			for(let i=0; i<length; i++){
+				
 				if(testData[i].qty !=0 && testData[i].qty !=undefined){
 					order_deliver_price = StringToNumber($(".g_dvr:eq("+i+")").text());
 					deliver_total_price += order_deliver_price;
@@ -383,6 +385,21 @@
 			}
 
 			return deliver_total_price;
+		}
+
+		//체크박스 전체 선택
+		function checkAll(sel_all_1){
+			let checked = $('#sel_all_1').is(':checked');
+			if(checked){
+				$('input:checkbox').prop('checked',true);
+			}
+			else{
+				$('input:checkbox').prop('checked',false);
+			}
+		}
+		//행 삭제
+		function del(element){
+		
 		}
 
 		var testData = [
@@ -436,7 +453,7 @@
 			var cartList = testData;
 			
 			//i번째 상품 품절처리
-			let i = 0; //여기서만 변경할 수 있어야함
+			const i = 0; //여기서만 변경할 수 있어야함
 
 			// END ajax를 이용하여 데이터를 가져왔다고 가정한다.
 	
@@ -457,7 +474,7 @@
 				
 				let cart = cartList[index];	
 				html += `
-				<tr class = "trw">						
+				<tr>						
 				 					<td class="g_pic">	
 				 						<input type="checkbox"  name="choice_prd" class="checkbox"  title="상품 선택"/>	
 				 						<a href="#"><img src="../images/goods/img_50.jpg" width="50" height="50"  alt="상품"  /></a>	
@@ -514,15 +531,24 @@
 			// 삭제
 			$(".del").click(function(){
 				$(this).closest("tr").remove();
+				$('#ord_amt').text(toCurrency(total_price()));
+				$('#deliver_total_amt').text(toCurrency(deliver_price()));
+				$('#total_amt').text(toCurrency(deliver_price()+total_price()));
 			});
 			
 		
 			//변경
 			$(".modi").each(function(i){
+			
 				$(this).click(function(){
+				if($('tbody tr').length <3 && i==2)
+				i--;
 				var goods_qty = $(this).siblings('input[name=qty]').val();
-				var goods_price = testData[i].price;
-				var order_price = goods_qty * goods_price;
+				var goods_price = StringToNumber($(".pprc:eq("+i+")").text());
+				var order_price = goods_qty * goods_price;	
+				console.log(goods_price);
+				console.log(order_price);
+			
 				if(testData[i].qty != 0 && testData[i].qty != undefined){
 					$(".g_prc:eq("+i+") > span").text(toCurrency(order_price)+'원');
 					$('#ord_amt').text(toCurrency(total_price()));
@@ -532,14 +558,31 @@
 				else{
 					alert("품절")
 				}
-	
-			});
-			
+			});		
 		});
-		});	
+			//선택상품을 삭제
+			$(".select_del").click(function(){	
+				let checked=true;
+				for(let i=0; i<testData.length; i++){
+				checked = $(".g_pic:eq("+i+") > input[name=choice_prd]").is(':checked');
+				if(checked){
+				$("tbody > tr:eq("+i+")").remove();
+				i--;
+				}
+			
+		}
+				$('#ord_amt').text(toCurrency(total_price()));
+				$('#deliver_total_amt').text(toCurrency(deliver_price()));
+				$('#total_amt').text(toCurrency(deliver_price()+total_price()));
+			});
+
+			//주문
+			$(".order").click(function(){
+			
+			});
+		});
 
 
-	
 		
 
 
