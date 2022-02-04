@@ -354,10 +354,6 @@
 			}
 
 			qtyElement.value = qtyValue;
-			// console.log('qtyPlus', element);
-			//console.log('qtyElement', qtyElement);
-
-
 		}
 		//String을 number로 변환하는 함수(, 원) 제거
 		function StringToNumber(text) {
@@ -380,9 +376,6 @@
 				alert("최소 수량입니다");
 			}
 			qtyElement.value = qtyValue;
-			// console.log('qtyMinus', element);
-			// console.log('qtyElement', qtyElement);
-
 		}
 
 		/***
@@ -536,11 +529,11 @@
 				 					</td>	
 				 					<td class="g_info">	
 				 						<p class="pname">	
-				 							<a href="#">${cart.goods_nm}</a>	
+				 							<a href="#">`+cart.goods_nm+`</a>	
 				 						</p>	
 				 						<ul class="opt">			
-							 							<li>${cart.item[0].item_nm} "("${cart.item[0].item_nm}")" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
-				  						<p class="pprc">${toCurrency(cart.price)}원</p>	
+							 							<li>`+cart.item[0].item_nm+` "`+cart.item[0].item_nm+`" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
+				  						<p class="pprc">`+toCurrency(cart.price)+`원</p>	
 				 					</td>	
 									<td class="g_info">	
 				 						<p class="icons">	
@@ -549,9 +542,9 @@
 									</td>	
 									<td class="g_qty" >	
 									<p class="qty">
-												<input type="text" name="qty" id="cnt3" value="${cart.qty}" class="input" title="상품수량입력" />	
-												<input type="hidden" name="amt" value="${toCurrency(cart.price)}원" class="input" title="상품 가격" />	
-												<input type="hidden" name="deliver_amt" value="${cart.deliver_amt}" class="input" title="배송비" />	
+												<input type="text" name="qty" id="cnt3" value="`+cart.qty+`" class="input" title="상품수량입력" />	
+												<input type="hidden" name="amt" value="`+toCurrency(cart.price)+`원" class="input" title="상품 가격" />	
+												<input type="hidden" name="deliver_amt" value="`+cart.deliver_amt+`" class="input" title="배송비" />	
 												<input type="hidden" name="goods_code" value="ABCDEFG1401203" class="input" title="상품코드" />	
 												<input type="hidden" name="item_no" value="ABCDEFG1401201_ITEM_3" class="input" title="단품 코드" />	
 												<a href="javascript:;" onclick="qtyPlus(this);"  class="plus"><img src="../images/goods/btn_cnt_up.gif" width="15" height="9" alt="수량증가" /></a>	
@@ -559,8 +552,8 @@
 												<a href="javascript:;" class="modi"><img src="../images/order/btn_cnt_mod.gif" width="46" height="18" alt="변경" /></a>	
 									</p>	
 								</td>	
-								<td class="g_prc"><img src=""/><span>${toCurrency(cart.price)}원</span></td>
-								<td class="g_dvr">${cart.deliver_amt}원</td>	
+								<td class="g_prc"><img src=""/><span>`+toCurrency(cart.price)+`원</span></td>
+								<td class="g_dvr">`+cart.deliver_amt+`원</td>	
 								<td class="g_ord">	
 									<a href="#" class="select_order"><img src="../images/order/btn_order_s.gif" width="51" height="20" alt="주문하기" /></a>	
 									<a href="javascript:;" class="del" id="del" name="del" >삭제하기</a>	
