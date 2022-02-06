@@ -390,6 +390,7 @@
 			//disabled
 			$("tbody > tr:eq(" + i + ") .plus").attr('onclick', false);
 			$("tbody > tr:eq(" + i + ") .minus").attr('onclick', false);
+			$(".g_qty:eq("+i+")  input[name=qty]").attr('disabled',true)
 
 		}
 
@@ -398,10 +399,9 @@
 
 		function total_price() {
 			length = $('tbody > tr').length;
-			($(".g_qty:eq(2)  input[name=qty]").val());
 			let total_price = 0;
 			for (let i = 0; i < length; i++) {
-				if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val()) {
+				if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() !=undefined) {
 					order_price = StringToNumber($(".g_prc:eq(" + i + ") > span").text());
 					total_price += order_price;
 				}
@@ -616,7 +616,6 @@
 				let checked = true;
 				let real_order_price = 0;
 				let total_order_price = 0;
-
 				for (let i = 0; i < length; i++) {
 					checked = $(".g_pic:eq(" + i + ") > input[name=choice_prd]").is(':checked');
 					if (checked) {
@@ -637,7 +636,9 @@
 
 			//선택 주문
 			$('.select_order').each(function(i){
+				
 			$(this).click(function(){
+				console.log(i);
 				print_element(i);
 				let real_order_price = StringToNumber($(".g_prc:eq(" + i +") > span").text())
 				let real_deliver_price = StringToNumber($(".g_dvr:eq(" + i +")").text());

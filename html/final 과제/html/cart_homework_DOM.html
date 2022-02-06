@@ -205,7 +205,7 @@
 							<tr>
 								<th scope="col" class="chk">
 									<input type="checkbox" class="checkbox" name="sel_all" id="sel_all_1"
-										onclick="checkAll('sel_all_1')" />
+										onclick="checkAll(this)" />
 									<label for="cart_all">전체선택</label>
 								</th>
 								<th scope="col">상품명/선택사항</th>
@@ -238,12 +238,12 @@
 						<input type="checkbox" name="sel_all" class="checkbox" id="sel_all_2" />
 						<label for="sel_all">전체선택</label>
 						<div class="btns">
-							<a href="javascript:;" class="select_del"><img src="../images/order/btn_ord_del.gif"
-									width="86" height="32" alt="선택상품을 삭제" /></a>
+							<a href="javascript:;" class="select_del" onclick="select_del"><img
+									src="../images/order/btn_ord_del.gif" width="86" height="32" alt="선택상품을 삭제" /></a>
 							<a href="#"><img src="../images/order/btn_ord_wish.gif" width="103" height="32"
 									alt="위시리스트 담기" /></a>
-							<a href="#" class="order"><img src="../images/order/btn_ord.gif" width="103" height="32"
-									alt="주문하기" /></a>
+							<a href="#" class="order" onclick="order()"><img src="../images/order/btn_ord.gif"
+									width="103" height="32" alt="주문하기" /></a>
 							<a href="#"><img src="../images/order/btn_ord_all.gif" width="103" height="32"
 									alt="전체 주문하기" /></a>
 						</div>
@@ -303,6 +303,8 @@
 	<!-- //FOOTER -->
 	<script type="text/javascript">
 		var length = 0;
+		var tbody = '';
+		var trList = '';
 		//<![CDATA[
 
 		// 가격 , 단위 찍는 함수 420280 => 420,280 
@@ -360,7 +362,6 @@
 			text = text.replace('원', '');
 			text = text.replace(/,/g, '');
 			text = parseFloat(text);
-
 			return text;
 		}
 		/**
@@ -384,25 +385,70 @@
 
 		function soldOut(i) {
 			//품절 처리(이미지, 텍스트 삭제)
-			$("tbody > tr:eq(" + i + ") > .g_prc > img").attr("src", "../images/goods/img_soldout.png");
-			$("tbody > tr:eq(" + i + ") > .g_prc > span").text('');
+			let soldOutElement = document.getElementsByClassName('g_prc');
+			soldOutElement[i].innerHTML = "<img src=../images/goods/img_soldout.png><span></span>";
 
 			//disabled
-			$("tbody > tr:eq(" + i + ") .plus").attr('onclick', false);
-			$("tbody > tr:eq(" + i + ") .minus").attr('onclick', false);
-
+			let plusElement = document.getElementsByClassName('plus');
+			plusElement[i].setAttribute('onclick', false);
+			let minusElement = document.getElementsByClassName('minus');
+			minusElement[i].setAttribute('onclick', false);
+			let inputElement = document.getElementsByName('qty')
+			inputElement[i].setAttribute('disabled', true)
 		}
+		
+	
+		//변경
+		function change(element) {
+			
+			let els = document.querySelectorAll('.modi');
+			let index = Array.from(els).indexOf(element);
+			var goods_qty = element.parentNode.querySelector('[name=qty]').value;
+			var goods_price = StringToNumber(document.querySelectorAll('.pprc')[index].innerText);
+			var order_price = goods_qty * goods_price;
+			
+			
+			if (	document.querySelectorAll('input[name=qty]')[index].value != 0 && 	document.querySelectorAll('input[name=qty]')[index].value != undefined) {
+						document.querySelectorAll('.g_prc')[index].innerText = (toCurrency(order_price) + '원');
+			}
+					else {
+						alert("품절")
+					}
+			print_price();
+		}
+		// $(".modi").each(function (i) {
 
+		// 	$(this).click(function () {
+		// 		i = $(this).closest('tr').index();
+		// 		var goods_qty = $(this).siblings('input[name=qty]').val();
+		// 		var goods_price = StringToNumber($(".pprc:eq(" + i + ")").text());
+		// 		var order_price = goods_qty * goods_price;
+
+		// 		if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() != undefined) {
+		// 			$(".g_prc:eq(" + i + ") > span").text(toCurrency(order_price) + '원');
+		// 		}
+		// 		else {
+		// 			alert("품절")
+		// 		}
+
+		// 		print_price();
+		// 	});
+		// });
 
 		//총 주문금액 계산
 
 		function total_price() {
+			//var s =document.getElementById('')
+			tBody = document.querySelector("#tbl_cart_list > tbody");
+			trList = tBody.querySelectorAll("tr");
 			length = $('tbody > tr').length;
-			($(".g_qty:eq(2)  input[name=qty]").val());
+
+			let name_qty = document.querySelectorAll('input[name=qty]');
+			let g_prc = document.querySelectorAll('.g_prc');
 			let total_price = 0;
 			for (let i = 0; i < length; i++) {
-				if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val()) {
-					order_price = StringToNumber($(".g_prc:eq(" + i + ") > span").text());
+				if (name_qty[i].value != 0 && name_qty[i].value != undefined) {
+					order_price = StringToNumber(g_prc[i].innerText);
 					total_price += order_price;
 				}
 			}
@@ -412,47 +458,118 @@
 
 		//배송비 계산
 		function deliver_price() {
-			length = $('tbody > tr').length;
+			tBody = document.querySelector("#tbl_cart_list > tbody");
+			trList = tBody.querySelectorAll("tr");
+			length = trList.length;
+			let name_qty = document.querySelectorAll('input[name=qty]');
+			let g_dvr = document.querySelectorAll('.g_dvr');
 			let deliver_total_price = 0;
 			for (let i = 0; i < length; i++) {
-				if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() != undefined) {
-					order_deliver_price = StringToNumber($(".g_dvr:eq(" + i + ")").text());
+				if (name_qty[i].value != 0 && name_qty[i].value != undefined) {
+					order_deliver_price = StringToNumber(g_dvr[i].innerText);
 					deliver_total_price += order_deliver_price;
+
 				}
 			}
-
 			return deliver_total_price;
 		}
 
 		//체크박스 전체 선택
 		function checkAll(sel_all_1) {
-			let checked = $('#sel_all_1').is(':checked');
-			if (checked) {
-				$('input:checkbox').prop('checked', true);
+			let check = document.getElementById('sel_all_1').checked;
+			let checkboxes = document.querySelectorAll('.checkbox')
+			if (check) {
+				checkboxes.forEach(e1 => {
+					e1.checked = true;
+				});
 			}
 			else {
-				$('input:checkbox').prop('checked', false);
+				checkboxes.forEach(e1 => {
+					e1.checked = false;
+				})
 			}
+		}
+
+		function del(element) {
+			element.closest("tr").remove();
+			print_price();
 		}
 
 		//주문금액, 배송비 합계, 총 예샹 결제금액을 적용하는 함수
 		function print_price() {
-			$('#ord_amt').text(toCurrency(total_price()));
-			$('#deliver_total_amt').text(toCurrency(deliver_price()));
-			$('#total_amt').text(toCurrency(deliver_price() + total_price()));
+			var ord_amtElement = document.getElementById('ord_amt');
+			ord_amtElement.innerText = toCurrency(total_price());
+
+			var deliver_total_amtElement = document.getElementById('deliver_total_amt');
+			deliver_total_amtElement.innerText = toCurrency(deliver_price());
+			var total_amtElement = document.getElementById('total_amt');
+			total_amtElement.innerText = toCurrency(deliver_price() + total_price());
 		}
 
 		//주문하기 금액 출력 함수
-		function print_element(i){
-				let qty = $(".g_qty:eq(" + i + ") input[name=qty] ").val();
-				let amt = $(".g_qty:eq(" + i + ")  input[name=amt]").val();
-				let deliver_amt = $(".g_qty:eq(" + i + ")  input[name=deliver_amt]").val();
-				let goods_code = $(".g_qty:eq(" + i + ")  input[name=goods_code]").val();
-				let item_no = $(".g_qty:eq(" + i + ")  input[name=item_no]").val();
-				let real_order_price = $(".g_prc:eq(" + i +") > span").text();
-				console.log('qty: '+qty+' amt: '+amt+' deliver_amt: '+deliver_amt+' goods_code: '+goods_code+' item_no: '+item_no)
+		function print_element(i) {
+			let qty = document.querySelectorAll('input[name=qty]')[i].value;
+			let amt = document.querySelectorAll('input[name=amt]')[i].value;
+			let deliver_amt = document.querySelectorAll('input[name=deliver_amt]')[i].value;
+			let goods_code = document.querySelectorAll('input[name=goods_code]')[i].value;
+			let item_no = document.querySelectorAll('input[name=qty]')[i].value;
+			let real_order_price = document.querySelectorAll('.g_prc')[i].innerText;
+			console.log('qty: ' + qty + ' amt: ' + amt + ' deliver_amt: ' + deliver_amt + ' goods_code: ' + goods_code + ' item_no: ' + item_no)
 		}
 
+		//전체 주문
+		function order() {
+			let checked = true;
+			let real_order_price = 0;
+			let total_order_price = 0;
+
+			for (let i = 0; i < length; i++) {
+				let name_qty = document.querySelectorAll('input[name=qty]')
+				checked = document.querySelectorAll('input[name=choice_prd]')[i].checked;
+				if (checked) {
+					if (name_qty[i].value != 0 && name_qty[i].value != undefined) {
+						document.querySelectorAll('.g_prc')[i]
+						print_element(i);
+
+						total_order_price = StringToNumber(document.querySelectorAll('.g_prc')[i].innerText) + StringToNumber(document.querySelectorAll('.g_dvr')[i].innerText);
+						real_order_price += total_order_price;
+					}
+					else {
+						alert("품절 상태의 상품이 포함되어 있습니다.!!");
+					}
+				}
+
+			}
+			console.log(toCurrency(real_order_price) + "원");
+		}
+
+		//선택상품 삭제
+		function select_del() {
+			let checked = true;
+			for (let i = 0; i < length; i++) {
+				checked = document.querySelectorAll('input[name=choice_prd]')[i].checked;
+				if (checked) {
+					trList[i].remove();
+					i--;
+				}
+			}
+			print_price();
+
+		}
+
+		
+
+		//선택주문
+		 function select_order(element){
+		 	 let els = document.querySelectorAll('.select_order');
+			 let index = Array.from(els).indexOf(element);
+		 	
+
+				 print_element(index);
+				 let real_order_price = StringToNumber(document.querySelectorAll('.g_prc')[index].innerText)
+				 let real_deliver_price = StringToNumber(document.querySelectorAll('.g_dvr')[index].innerText);
+				 console.log('실 주문금액 : '+(real_order_price+real_deliver_price));
+		 }
 		var testData = [
 			{
 				goods_img: '../images/goods/img_50.jpg',
@@ -510,7 +627,6 @@
 			// console.log(cartTable);
 
 			testData[i].qty = 0;
-
 			var tBody = document.querySelector("#tbl_cart_list > tbody");
 			var trList = tBody.querySelectorAll("tr");
 
@@ -529,11 +645,11 @@
 				 					</td>	
 				 					<td class="g_info">	
 				 						<p class="pname">	
-				 							<a href="#">`+cart.goods_nm+`</a>	
+				 							<a href="#">`+ cart.goods_nm + `</a>	
 				 						</p>	
 				 						<ul class="opt">			
-							 							<li>`+cart.item[0].item_nm+` "`+cart.item[0].item_nm+`" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
-				  						<p class="pprc">`+toCurrency(cart.price)+`원</p>	
+							 							<li>`+ cart.item[0].item_nm + ` "` + cart.item[0].item_nm + `" ${cart.item[0].item_qty}개 <a ="#" onclick="lyrPreView("layer2");return false;" onkeypress="this.onclick;"></a><img src="../images/order/btn_chg_option.gif" width="71" height="18" alt="선택사항수정"/></li></ul>	
+				  						<p class="pprc">`+ toCurrency(cart.price) + `원</p>	
 				 					</td>	
 									<td class="g_info">	
 				 						<p class="icons">	
@@ -542,21 +658,21 @@
 									</td>	
 									<td class="g_qty" >	
 									<p class="qty">
-												<input type="text" name="qty" id="cnt3" value="`+cart.qty+`" class="input" title="상품수량입력" />	
-												<input type="hidden" name="amt" value="`+toCurrency(cart.price)+`원" class="input" title="상품 가격" />	
-												<input type="hidden" name="deliver_amt" value="`+cart.deliver_amt+`" class="input" title="배송비" />	
+												<input type="text" name="qty" id="cnt3" value="`+ cart.qty + `" class="input" title="상품수량입력" />	
+												<input type="hidden" name="amt" value="`+ toCurrency(cart.price) + `원" class="input" title="상품 가격" />	
+												<input type="hidden" name="deliver_amt" value="`+ cart.deliver_amt + `" class="input" title="배송비" />	
 												<input type="hidden" name="goods_code" value="ABCDEFG1401203" class="input" title="상품코드" />	
 												<input type="hidden" name="item_no" value="ABCDEFG1401201_ITEM_3" class="input" title="단품 코드" />	
 												<a href="javascript:;" onclick="qtyPlus(this);"  class="plus"><img src="../images/goods/btn_cnt_up.gif" width="15" height="9" alt="수량증가" /></a>	
 												<a href="javascript:;" onclick="qtyMinus(this);" class="minus"><img src="../images/goods/btn_cnt_down.gif" width="15" height="9" alt="수량감소" /></a>	
-												<a href="javascript:;" class="modi"><img src="../images/order/btn_cnt_mod.gif" width="46" height="18" alt="변경" /></a>	
+												<a href="javascript:;" class="modi" onclick="change(this)"><img src="../images/order/btn_cnt_mod.gif" width="46" height="18" alt="변경" /></a>	
 									</p>	
 								</td>	
-								<td class="g_prc"><img src=""/><span>`+toCurrency(cart.price)+`원</span></td>
-								<td class="g_dvr">`+cart.deliver_amt+`원</td>	
+								<td class="g_prc"><img src=""/><span>`+ toCurrency(cart.price) + `원</span></td>
+								<td class="g_dvr">`+ cart.deliver_amt + `원</td>	
 								<td class="g_ord">	
-									<a href="#" class="select_order"><img src="../images/order/btn_order_s.gif" width="51" height="20" alt="주문하기" /></a>	
-									<a href="javascript:;" class="del" id="del" name="del" >삭제하기</a>	
+									<a href="#" class="select_order" onclick="select_order(this)"  ><img src="../images/order/btn_order_s.gif" width="51" height="20" alt="주문하기" /></a>	
+									<a href="javascript:;" class="del" name="del" onclick="del(this)">삭제하기</a>	
 				 			</td>	
 							</tr> `;
 
@@ -565,95 +681,9 @@
 			}
 			tBody.innerHTML = html;
 			soldOut(i);
+			print_price();
 		}
 		searchCartList();
-
-		$(document).ready(function () {
-			//초기 금액 설정
-			print_price();
-
-			// 삭제
-			$(".del").click(function () {
-				$(this).closest("tr").remove();
-				print_price();
-			});
-
-			//변경
-			$(".modi").each(function (i) {
-
-				$(this).click(function () {
-					i = $(this).closest('tr').index();
-					var goods_qty = $(this).siblings('input[name=qty]').val();
-					var goods_price = StringToNumber($(".pprc:eq(" + i + ")").text());
-					var order_price = goods_qty * goods_price;
-
-					if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() != undefined) {
-						$(".g_prc:eq(" + i + ") > span").text(toCurrency(order_price) + '원');
-					}
-					else {
-						alert("품절")
-					}
-
-					print_price();
-				});
-			});
-			//선택상품을 삭제
-			$(".select_del").click(function () {
-				let checked = true;
-				for (let i = 0; i < length; i++) {
-					checked = $(".g_pic:eq(" + i + ") > input[name=choice_prd]").is(':checked');
-					if (checked) {
-						$("tbody > tr:eq(" + i + ")").remove();
-						i--;
-					}
-				}
-				print_price();
-
-			});
-
-			//전체 주문
-			$(".order").click(function () {
-				let checked = true;
-				let real_order_price = 0;
-				let total_order_price = 0;
-
-				for (let i = 0; i < length; i++) {
-					checked = $(".g_pic:eq(" + i + ") > input[name=choice_prd]").is(':checked');
-					if (checked) {
-						if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() != undefined) {
-							print_element(i);
-
-							total_order_price = StringToNumber($(".g_prc:eq(" + i + ") > span").text()) + StringToNumber($(".g_dvr:eq(" + i + ")").text());
-							real_order_price += total_order_price;
-						}
-						else {
-							alert("품절 상태의 상품이 포함되어 있습니다.!!");
-						}
-					}
-
-				}
-				console.log(toCurrency(real_order_price) + "원");
-			});
-
-			//선택 주문
-			$('.select_order').each(function(i){
-			$(this).click(function(){
-				print_element(i);
-				let real_order_price = StringToNumber($(".g_prc:eq(" + i +") > span").text())
-				let real_deliver_price = StringToNumber($(".g_dvr:eq(" + i +")").text());
-				console.log(' real_order_price : '+(real_order_price+real_deliver_price));
-			});
-
-		});
-
-
-
-
-		});
-
-
-
-
 
 
 	</script>
