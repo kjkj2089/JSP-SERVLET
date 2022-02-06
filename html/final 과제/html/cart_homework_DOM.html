@@ -238,7 +238,7 @@
 						<input type="checkbox" name="sel_all" class="checkbox" id="sel_all_2" />
 						<label for="sel_all">전체선택</label>
 						<div class="btns">
-							<a href="javascript:;" class="select_del" onclick="select_del"><img
+							<a href="javascript:;" class="select_del" onclick="select_del()"><img
 									src="../images/order/btn_ord_del.gif" width="86" height="32" alt="선택상품을 삭제" /></a>
 							<a href="#"><img src="../images/order/btn_ord_wish.gif" width="103" height="32"
 									alt="위시리스트 담기" /></a>
@@ -396,44 +396,26 @@
 			let inputElement = document.getElementsByName('qty')
 			inputElement[i].setAttribute('disabled', true)
 		}
-		
-	
+
+
 		//변경
 		function change(element) {
-			
+
 			let els = document.querySelectorAll('.modi');
 			let index = Array.from(els).indexOf(element);
 			var goods_qty = element.parentNode.querySelector('[name=qty]').value;
 			var goods_price = StringToNumber(document.querySelectorAll('.pprc')[index].innerText);
 			var order_price = goods_qty * goods_price;
-			
-			
-			if (	document.querySelectorAll('input[name=qty]')[index].value != 0 && 	document.querySelectorAll('input[name=qty]')[index].value != undefined) {
-						document.querySelectorAll('.g_prc')[index].innerText = (toCurrency(order_price) + '원');
+
+
+			if (document.querySelectorAll('input[name=qty]')[index].value != 0 && document.querySelectorAll('input[name=qty]')[index].value != undefined) {
+				document.querySelectorAll('.g_prc')[index].innerText = (toCurrency(order_price) + '원');
 			}
-					else {
-						alert("품절")
-					}
+			else {
+				alert("품절")
+			}
 			print_price();
 		}
-		// $(".modi").each(function (i) {
-
-		// 	$(this).click(function () {
-		// 		i = $(this).closest('tr').index();
-		// 		var goods_qty = $(this).siblings('input[name=qty]').val();
-		// 		var goods_price = StringToNumber($(".pprc:eq(" + i + ")").text());
-		// 		var order_price = goods_qty * goods_price;
-
-		// 		if ($(".g_qty:eq(" + i + ") input[name=qty]").val() != 0 && $(".g_qty:eq(" + i + ") input[name=qty]").val() != undefined) {
-		// 			$(".g_prc:eq(" + i + ") > span").text(toCurrency(order_price) + '원');
-		// 		}
-		// 		else {
-		// 			alert("품절")
-		// 		}
-
-		// 		print_price();
-		// 	});
-		// });
 
 		//총 주문금액 계산
 
@@ -490,6 +472,7 @@
 			}
 		}
 
+		//주문하기 밑 삭제
 		function del(element) {
 			element.closest("tr").remove();
 			print_price();
@@ -546,30 +529,34 @@
 		//선택상품 삭제
 		function select_del() {
 			let checked = true;
+			tBody = document.querySelector("#tbl_cart_list > tbody");
+			trList = tBody.querySelectorAll("tr");
+			let choice_prd = document.querySelectorAll('input[name=choice_prd]')
 			for (let i = 0; i < length; i++) {
 				checked = document.querySelectorAll('input[name=choice_prd]')[i].checked;
 				if (checked) {
+					console.log(trList[i])
 					trList[i].remove();
-					i--;
+					length--;
+				}
+				else {
+
 				}
 			}
 			print_price();
-
 		}
 
-		
+
 
 		//선택주문
-		 function select_order(element){
-		 	 let els = document.querySelectorAll('.select_order');
-			 let index = Array.from(els).indexOf(element);
-		 	
-
-				 print_element(index);
-				 let real_order_price = StringToNumber(document.querySelectorAll('.g_prc')[index].innerText)
-				 let real_deliver_price = StringToNumber(document.querySelectorAll('.g_dvr')[index].innerText);
-				 console.log('실 주문금액 : '+(real_order_price+real_deliver_price));
-		 }
+		function select_order(element) {
+			let els = document.querySelectorAll('.select_order');
+			let index = Array.from(els).indexOf(element);
+			print_element(index);
+			let real_order_price = StringToNumber(document.querySelectorAll('.g_prc')[index].innerText)
+			let real_deliver_price = StringToNumber(document.querySelectorAll('.g_dvr')[index].innerText);
+			console.log('실 주문금액 : ' + (real_order_price + real_deliver_price));
+		}
 		var testData = [
 			{
 				goods_img: '../images/goods/img_50.jpg',
